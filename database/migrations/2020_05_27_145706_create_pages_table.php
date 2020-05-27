@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInfoUsersTable extends Migration
+class CreatePagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateInfoUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('info_users', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->text('bio');
-            $table->string('linkedin')->nullable();
-            $table->string('twitter')->nullable();
-            $table->string('facebook')->nullable();
-            $table->text('path_photo')->nullable();
+            $table->foreignId('category_id')->constrained();
+            $table->string('title', 200);
+            $table->string('summary')->nullable();
+            $table->text('body');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ class CreateInfoUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('info_users');
+        Schema::dropIfExists('pages');
     }
 }
