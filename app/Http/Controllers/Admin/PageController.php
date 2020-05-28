@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\User;
 use App\Page;
 use App\Category;
@@ -32,7 +33,10 @@ class PageController extends Controller
      */
     public function create()
     {
-        //
+      $categories = Category::all();
+      $tags = Tag::all();
+      $photos = Photo::all();
+      return view('admin.pages.create', compact('categories', 'tags', 'photos'));
     }
 
     /**
@@ -43,7 +47,22 @@ class PageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $validator = Validator::make($request->all(), [
+            'title' => 'required|max:200',
+            'body' => 'required',
+            'category_id'=> 'required|exists:categories,id',
+            'tags'=> 'required|array',
+            'photos'=> 'required|array',
+            'tags.*'=> 'exists:tags,id',
+            'photos.*'=> 'exists:photos,id',
+
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.pages.create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
     }
 
     /**
